@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El costo del capital — Allied Food Products</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Palette directly matched from presentation slide */
+  --bg: #f4f6f7;
+  --panel: #ffffff;
+  --panel2: #eaeef0;
+  --paper: #2c3539;
+  --ink: #2c3539;
+  
+  /* Slide inspired colors */
+  --teal: #68939b;        /* "EL COSTO" green-teal accent */
+  --teal-dark: #4e737a;   /* Hover/Active Teal */
+  --slate-box: #6c728f;   /* "DEL CAPITAL" purple-slate box color */
+  --slate-light: #e0e3ed;
+  --red-accent: #d93838;  /* Red zigzag line accent */
+  
+  --gold: var(--teal);    /* Primary accent fallback */
+  --rule: #dce3e6;
+  --muted: #64748b;
+  
+  --accept: #68939b;
+  --reject: #d93838;
+  
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  box-sizing: border-box;
+}
+
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *:before, *:after { box-sizing: inherit; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--paper);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  padding: 3.5rem 1.5rem 2.5rem;
+  text-align: center;
+  background: #ffffff;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--teal) 0%, var(--slate-box) 70%, var(--red-accent) 100%);
+}
+
+header .kicker {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--slate-box);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+header h1 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  margin: 0.2rem 0 0.8rem;
+  color: var(--paper);
+  letter-spacing: -0.01em;
+}
+
+header h1 span.highlight {
+  background: var(--slate-box);
+  color: #ffffff;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 1.1;
+}
+
+header p {
+  color: var(--muted);
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 1.2rem 4rem;
+}
+
+section.block {
+  margin-top: 3rem;
+}
+
+.block h2 {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.block h2::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: var(--red-accent);
+  border-radius: 2px;
+}
+
+.block .sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+  max-width: 720px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 12px rgba(104, 147, 155, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .grid2 { grid-template-columns: 1fr; }
+}
+
+.control {
+  margin-bottom: 1.25rem;
+}
+
+.control label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--paper);
+  margin-bottom: 0.4rem;
+}
+
+.control label span.val {
+  font-family: var(--font-mono);
+  color: var(--teal-dark);
+  font-weight: 600;
+  background: var(--panel2);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--panel2);
+  border-radius: 3px;
+  outline: none;
+  margin: 0.5rem 0;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--teal);
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: var(--teal-dark);
+}
+
+input[type=range]:disabled::-webkit-slider-thumb {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+
+.stack {
+  background: var(--panel2);
+  border-radius: 8px;
+  overflow: hidden;
+  height: 2.8rem;
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--rule);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.seg.debt { background: var(--teal); }
+.seg.pref { background: var(--slate-box); }
+.seg.common { background: #d99b26; } /* Warm Ochre Gold balance */
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--rule);
+}
+
+.result-row .num {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  color: var(--teal-dark);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--teal-dark), var(--slate-box));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.compare {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.crow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.85rem;
+}
+
+.crow .lbl {
+  width: 140px;
+  color: var(--paper);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.cbar-track {
+  flex: 1;
+  background: var(--panel2);
+  border-radius: 4px;
+  height: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cbar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--teal);
+  transition: width 0.3s ease;
+}
+
+.crow .cval {
+  font-family: var(--font-mono);
+  width: 55px;
+  text-align: right;
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.arrow-note {
+  margin-top: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  background: var(--panel2);
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--teal);
+}
+
+.arrow-note b {
+  color: var(--teal-dark);
+  font-family: var(--font-mono);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin-top: 0.5rem;
+}
+
+th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.75rem 0.6rem;
+  border-bottom: 2px solid var(--rule);
+}
+
+td {
+  padding: 0.75rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+tr.reject { background: rgba(217, 56, 56, 0.04); }
+tr.accept { background: rgba(104, 147, 155, 0.06); }
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  display: inline-block;
+  text-align: center;
+}
+
+.pill.accept {
+  background: var(--teal);
+  color: #ffffff;
+}
+
+.pill.reject {
+  background: var(--red-accent);
+  color: #ffffff;
+}
+
+.retinput {
+  width: 70px;
+  background: #ffffff;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: 0.35rem 0.4rem;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.retinput:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(104, 147, 155, 0.2);
+}
+
+.toggle {
+  display: inline-flex;
+  background: var(--panel2);
+  border: 1px solid var(--rule);
+  border-radius: 30px;
+  padding: 4px;
+  margin-bottom: 1.2rem;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.toggle button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.82rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle button.active {
+  background: var(--slate-box);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(108, 114, 143, 0.3);
+}
+
+.flag {
+  font-size: 0.75rem;
+  color: var(--red-accent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 0.9rem;
+  line-height: 1.4;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 2.5rem 1rem 3.5rem;
+  border-top: 1px solid var(--rule);
+  background: #ffffff;
+  margin-top: 3rem;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Capítulo 10 · Costo de Capital</div>
+  <h1>El costo del capital <span class="highlight">ponderado promedio</span></h1>
+  <p>Tres ejemplos interactivos basados en Allied Food Products: el cálculo del WACC, la sensibilidad a factores externos, y la elección de proyectos según el riesgo divisional.</p>
+</header>
+
+<main>
+
+<section class="block" id="s1">
+  <h2>1 · Calculadora del WACC de Allied</h2>
+  <p class="sub">Mueve los pesos y los costos de cada componente de capital. El WACC y la barra de contribución se recalculan al instante — igual que la ecuación 10.1 del capítulo.</p>
+  
+  <div class="card grid2">
+    <div>
+      <div class="control">
+        <label>Peso de deuda, w<sub>d</sub> <span class="val" id="v-wd">45%</span></label>
+        <input type="range" id="wd" min="0" max="100" value="45">
+      </div>
+      <div class="control">
+        <label>Peso de acciones preferentes, w<sub>p</sub> <span class="val" id="v-wp">2%</span></label>
+        <input type="range" id="wp" min="0" max="100" value="2">
+      </div>
+      <div class="control">
+        <label>Peso de acciones comunes, w<sub>c</sub> (residual) <span class="val" id="v-wc">53%</span></label>
+        <input type="range" id="wc" min="0" max="100" value="53" disabled style="opacity:.4">
+      </div>
+      <div class="note">w<sub>c</sub> se ajusta automáticamente para que los tres pesos sumen 100%.</div>
+    </div>
+    
+    <div>
+      <div class="control">
+        <label>Costo de deuda antes de impuestos, r<sub>d</sub> <span class="val" id="v-rd">10.0%</span></label>
+        <input type="range" id="rd" min="0" max="20" step="0.1" value="10">
+      </div>
+      <div class="control">
+        <label>Tasa impositiva marginal, T <span class="val" id="v-t1">40%</span></label>
+        <input type="range" id="t1" min="0" max="50" step="1" value="40">
+      </div>
+      <div class="control">
+        <label>Costo de acciones preferentes, r<sub>p</sub> <span class="val" id="v-rp">10.3%</span></label>
+        <input type="range" id="rp" min="0" max="20" step="0.1" value="10.3">
+      </div>
+      <div class="control">
+        <label>Costo de acciones comunes, r<sub>s</sub> <span class="val" id="v-rs">13.5%</span></label>
+        <input type="range" id="rs" min="0" max="25" step="0.1" value="13.5">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.25rem;">
+    <div class="stack">
+      <div class="seg debt" id="seg-d"></div>
+      <div class="seg pref" id="seg-p"></div>
+      <div class="seg common" id="seg-c"></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--teal)"></i>Deuda: w<sub>d</sub>·r<sub>d</sub>(1-T)</span>
+      <span><i class="dot" style="background:var(--slate-box)"></i>Preferentes: w<sub>p</sub>·r<sub>p</sub></span>
+      <span><i class="dot" style="background:#d99b26"></i>Comunes: w<sub>c</sub>·r<sub>s</sub></span>
+    </div>
+    <div class="result-row">
+      <div style="color:var(--muted);font-size:.9rem;font-weight:500;">WACC = w<sub>d</sub>r<sub>d</sub>(1-T) + w<sub>p</sub>r<sub>p</sub> + w<sub>c</sub>r<sub>s</sub></div>
+      <div class="num" id="wacc1">10.1%</div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="s2">
+  <h2>2 · Cómo mueven el WACC los factores externos</h2>
+  <p class="sub">La estructura de capital de Allied queda fija (45% deuda, 2% preferentes, 53% comunes). Aquí el costo de cada componente se deriva del entorno de mercado: la tasa libre de riesgo, la prima de riesgo del mercado, la beta de la acción y la tasa impositiva — los cuatro factores fuera del control directo de la empresa (sección 10-8A).</p>
+  
+  <div class="card grid2">
+    <div>
+      <div class="control">
+        <label>Tasa libre de riesgo, r<sub>RF</sub> <span class="val" id="v-rrf">5.6%</span></label>
+        <input type="range" id="rrf" min="1" max="10" step="0.1" value="5.6">
+      </div>
+      <div class="control">
+        <label>Prima de riesgo de mercado, RP<sub>M</sub> <span class="val" id="v-rpm">5.0%</span></label>
+        <input type="range" id="rpm" min="1" max="10" step="0.1" value="5">
+      </div>
+      <div class="control">
+        <label>Beta de la acción, b <span class="val" id="v-beta">1.48</span></label>
+        <input type="range" id="beta" min="0.3" max="2.5" step="0.01" value="1.48">
+      </div>
+      <div class="control">
+        <label>Tasa impositiva, T <span class="val" id="v-t2">40%</span></label>
+        <input type="range" id="t2" min="0" max="50" step="1" value="40">
+      </div>
+      <div class="note">Costo de deuda: r<sub>d</sub> = r<sub>RF</sub> + 4.4 puntos de spread crediticio. r<sub>p</sub> se mantiene en 10.3% (obligación contractual, poco sensible al mercado).</div>
+    </div>
+    
+    <div>
+      <div class="compare">
+        <div class="crow">
+          <span class="lbl">r<sub>d</sub> (CAPM/spread)</span>
+          <div class="cbar-track"><div class="cbar-fill" id="bar-rd" style="width:50%;background:var(--slate-box)"></div></div>
+          <span class="cval" id="val-rd2">10.0%</span>
+        </div>
+        <div class="crow">
+          <span class="lbl">r<sub>s</sub> (CAPM)</span>
+          <div class="cbar-track"><div class="cbar-fill" id="bar-rs" style="width:52%;background:var(--teal)"></div></div>
+          <span class="cval" id="val-rs2">13.0%</span>
+        </div>
+        <div class="crow">
+          <span class="lbl">WACC resultante</span>
+          <div class="cbar-track"><div class="cbar-fill" id="bar-w" style="width:39%;background:#d99b26"></div></div>
+          <span class="cval" id="val-w2">9.8%</span>
+        </div>
+      </div>
+      <div class="arrow-note">Frente al caso base (r<sub>RF</sub>=5.6%, RP<sub>M</sub>=5%, b=1.48, T=40% → WACC=9.8%): <span id="delta-note"><b>sin cambios</b></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="s3">
+  <h2>3 · ¿Qué proyectos debería aceptar Allied?</h2>
+  <p class="sub">La empresa A (WACC corporativo 10%) tiene una división de bajo riesgo L (WACC 7%) y una de alto riesgo H (WACC 13%), como en la figura 10.2. Ajusta el rendimiento esperado de cada proyecto y compara qué pasa si se usa el WACC corporativo único frente al WACC de cada división.</p>
+
+  <div class="toggle">
+    <button id="btn-div" class="active">WACC divisional (correcto)</button>
+    <button id="btn-corp">WACC corporativo único</button>
+  </div>
+
+  <div class="card" style="padding:1rem 1.5rem;">
+    <table>
+      <thead>
+        <tr>
+          <th>Proyecto</th>
+          <th>División</th>
+          <th>WACC obstáculo</th>
+          <th>Rendimiento esperado</th>
+          <th>Decisión</th>
+        </tr>
+      </thead>
+      <tbody id="proj-body"></tbody>
+    </table>
+  </div>
+  <div class="note" id="s3-note"></div>
+</section>
+
+</main>
+
+<footer>Basado en el capítulo 10, "El costo del capital" — cifras ilustrativas de Allied Food Products.</footer>
+
+<script>
+const wdEl=document.getElementById('wd'), wpEl=document.getElementById('wp'), wcEl=document.getElementById('wc');
+const rdEl=document.getElementById('rd'), t1El=document.getElementById('t1'), rpEl=document.getElementById('rp'), rsEl=document.getElementById('rs');
+
+function clampWeights(changed){
+  let wd=+wdEl.value, wp=+wpEl.value;
+  if(wd+wp>100){
+    if(changed==='wd') wp=100-wd; else wd=100-wp;
+    wdEl.value=wd; wpEl.value=wp;
+  }
+  const wc=100-wd-wp;
+  wcEl.value=wc;
+  document.getElementById('v-wd').textContent=wd+'%';
+  document.getElementById('v-wp').textContent=wp+'%';
+  document.getElementById('v-wc').textContent=wc+'%';
+  return {wd,wp,wc};
+}
+
+function updateWACC1(changed){
+  const {wd,wp,wc}=clampWeights(changed);
+  const rd=+rdEl.value, T=+t1El.value, rp=+rpEl.value, rs=+rsEl.value;
+  document.getElementById('v-rd').textContent=rd.toFixed(1)+'%';
+  document.getElementById('v-t1').textContent=T+'%';
+  document.getElementById('v-rp').textContent=rp.toFixed(1)+'%';
+  document.getElementById('v-rs').textContent=rs.toFixed(1)+'%';
+
+  const cDebt=(wd/100)*rd*(1-T/100);
+  const cPref=(wp/100)*rp;
+  const cComm=(wc/100)*rs;
+  const wacc=cDebt+cPref+cComm;
+  const total=Math.max(cDebt+cPref+cComm,0.0001);
+  
+  document.getElementById('seg-d').style.width=(cDebt/total*100)+'%';
+  document.getElementById('seg-p').style.width=(cPref/total*100)+'%';
+  document.getElementById('seg-c').style.width=(cComm/total*100)+'%';
+  document.getElementById('seg-d').textContent=cDebt>0.6?cDebt.toFixed(1)+'%':'';
+  document.getElementById('seg-p').textContent=cPref>0.6?cPref.toFixed(1)+'%':'';
+  document.getElementById('seg-c').textContent=cComm>0.6?cComm.toFixed(1)+'%':'';
+  document.getElementById('wacc1').textContent=wacc.toFixed(1)+'%';
+  return wacc;
+}
+
+[wdEl,wpEl].forEach(el=>el.addEventListener('input',()=>updateWACC1(el.id)));
+[rdEl,t1El,rpEl,rsEl].forEach(el=>el.addEventListener('input',()=>updateWACC1()));
+updateWACC1();
+
+const rrfEl=document.getElementById('rrf'), rpmEl=document.getElementById('rpm'), betaEl=document.getElementById('beta'), t2El=document.getElementById('t2');
+const BASE_WACC=9.8;
+
+function updateWACC2(){
+  const rrf=+rrfEl.value, rpm=+rpmEl.value, beta=+betaEl.value, T=+t2El.value;
+  document.getElementById('v-rrf').textContent=rrf.toFixed(1)+'%';
+  document.getElementById('v-rpm').textContent=rpm.toFixed(1)+'%';
+  document.getElementById('v-beta').textContent=beta.toFixed(2);
+  document.getElementById('v-t2').textContent=T+'%';
+
+  const rd=rrf+4.4;
+  const rs=rrf+rpm*beta;
+  const rp=10.3;
+  const wacc=0.45*rd*(1-T/100)+0.02*rp+0.53*rs;
+
+  document.getElementById('val-rd2').textContent=rd.toFixed(1)+'%';
+  document.getElementById('val-rs2').textContent=rs.toFixed(1)+'%';
+  document.getElementById('val-w2').textContent=wacc.toFixed(1)+'%';
+  document.getElementById('bar-rd').style.width=Math.min(rd/20*100,100)+'%';
+  document.getElementById('bar-rs').style.width=Math.min(rs/25*100,100)+'%';
+  document.getElementById('bar-w').style.width=Math.min(wacc/16*100,100)+'%';
+
+  const delta=wacc-BASE_WACC;
+  const note=document.getElementById('delta-note');
+  if(Math.abs(delta)<0.05){ note.innerHTML='<b>sin cambios</b>'; }
+  else{ note.innerHTML='<b>'+(delta>0?'+':'')+delta.toFixed(1)+' puntos</b> '+(delta>0?'más caro reunir capital':'más barato reunir capital'); }
+}
+
+[rrfEl,rpmEl,betaEl,t2El].forEach(el=>el.addEventListener('input',updateWACC2));
+updateWACC2();
+
+const HURDLE={corp:10.0, L:7.0, H:13.0};
+const projects=[
+  {name:'Proyecto 1', div:'L', ret:9.0},
+  {name:'Proyecto 2', div:'L', ret:6.0},
+  {name:'Proyecto 3', div:'A', ret:11.0},
+  {name:'Proyecto 4', div:'A', ret:9.0},
+  {name:'Proyecto 5', div:'H', ret:11.0},
+  {name:'Proyecto 6', div:'H', ret:14.0},
+];
+const divName={L:'L (bajo riesgo)',A:'A / Corporativo',H:'H (alto riesgo)'};
+let mode='div';
+
+function renderProjects(){
+  const body=document.getElementById('proj-body');
+  body.innerHTML='';
+  let mismatches=0;
+  projects.forEach((p,i)=>{
+    const hurdleDiv = p.div==='A' ? HURDLE.corp : HURDLE[p.div];
+    const hurdle = mode==='div' ? hurdleDiv : HURDLE.corp;
+    const decision = p.ret > hurdle;
+    const correctDecision = p.ret > hurdleDiv;
+    const wrong = mode==='corp' && decision!==correctDecision;
+    if(wrong) mismatches++;
+    const tr=document.createElement('tr');
+    tr.className = decision ? 'accept' : 'reject';
+    tr.innerHTML = `<td><b>${p.name}</b></td>
+      <td>${divName[p.div]}</td>
+      <td style="font-family:var(--font-mono);font-weight:600;">${hurdle.toFixed(1)}%</td>
+      <td><input class="retinput" type="number" step="0.1" value="${p.ret.toFixed(1)}" data-i="${i}"></td>
+      <td><span class="pill ${decision?'accept':'reject'}">${decision?'Aceptar':'Rechazar'}</span> ${wrong?'<div class="flag">↳ decisión incorrecta</div>':''}</td>`;
+    body.appendChild(tr);
+  });
+  document.getElementById('s3-note').textContent = mode==='corp'
+    ? (mismatches>0 ? `Con un WACC corporativo único, ${mismatches} proyecto(s) reciben la decisión equivocada frente al criterio divisional.` : 'Con estos rendimientos, el WACC único no cambia ninguna decisión — pero eso no es garantía general.')
+    : 'Cada proyecto se compara contra el WACC de su propia división: así se evita aceptar demasiado riesgo o rechazar proyectos seguros.';
+  body.querySelectorAll('.retinput').forEach(inp=>{
+    inp.addEventListener('input',e=>{
+      projects[+e.target.dataset.i].ret=+e.target.value||0;
+      renderProjects();
+    });
+  });
+}
+
+document.getElementById('btn-div').addEventListener('click',()=>{
+  mode='div';
+  document.getElementById('btn-div').classList.add('active');
+  document.getElementById('btn-corp').classList.remove('active');
+  renderProjects();
+});
+
+document.getElementById('btn-corp').addEventListener('click',()=>{
+  mode='corp';
+  document.getElementById('btn-corp').classList.add('active');
+  document.getElementById('btn-div').classList.remove('active');
+  renderProjects();
+});
+
+renderProjects();
+</script>
+</body>
+</html>
